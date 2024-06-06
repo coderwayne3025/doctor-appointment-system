@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Appointment System</title>
+    <script>
+        // 获取医生列表并显示在下拉菜单中
+        async function fetchDoctors() {
+            const response = await fetch('/doctors');
+            const doctors = await response.json();
+
+            const doctorSelect = document.getElementById('doctorSelect');
+            doctorSelect.innerHTML = '<option value="">Select a doctor</option>';
+
+            doctors.forEach(doctor => {
+                const option = document.createElement('option');
+                option.value = doctor.id;
+                option.textContent = doctor.username;
+                doctorSelect.appendChild(option);
+            });
+        }
+
+        // 预约医生
+        async function bookAppointment() {
+            const doctorId = document.getElementById('doctorSelect').value;
+            const patientId = document.getElementById('patientId').value;
+            const appointmentTime = document.getElementById('appointmentTime').value;
+
+            const response = await fetch('/appointments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    doctor_id: doctorId,
+                    patient_id: patientId,
+                    appointment_time: appointmentTime
+                })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                alert(result.message);
+            } else {
+                alert('Error: ' + result.error);
+            }
+        }
+
+        // 在页面加载时调用 fetchDoctors 函数
+        window.onload = fetchDoctors;
+    </script>
+</head>
+
+<body>
+    <h1>Doctor Appointment System</h1>
+
+    <label for="doctorSelect">Choose a doctor:</label>
+    <select id="doctorSelect">
+        <option value="">Select a doctor</option>
+    </select><br><br>
+
+    <label for="patientId">Your Patient ID:</label>
+    <input type="text" id="patientId"><br><br>
+
+    <label for="appointmentTime">Appointment Time (YYYY-MM-DD HH:MM:SS):</label>
+    <input type="text" id="appointmentTime"><br><br>
+
+    <button onclick="bookAppointment()">Book Appointment</button>
+</body>
+
+</html>
