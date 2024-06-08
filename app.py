@@ -85,7 +85,7 @@ def admin():
 def doctor():
     if current_user.role != 'doctor':
         return jsonify({'message': 'Access denied'}), 403
-    return jsonify({'message': 'Welcome doctor!'})
+    return app.send_static_file('doctor.html')
 
 @app.route('/patient')
 @login_required
@@ -112,5 +112,37 @@ def book_appointment():
     db.session.add(new_appointment)
     db.session.commit()
     return jsonify({'message': 'Appointment booked successfully!'}), 201
+
+@app.route('/doctor/set_availability', methods=['POST'])
+@login_required
+def set_availability():
+    if current_user.role != 'doctor':
+        return 'Access denied', 403
+    print("hello")
+    print(request)
+    data = request.get_json()
+    print(data)
+    available_time = datetime.strptime(data['available_time'], '%Y-%m-%dT%H:%M')
+    print(available_time)
+    new_availability = DoctorAvailability(doctor_id=current_user.id, available_time=available_time)
+    db.session.add(new_availability)
+    db.session.commit()
+    return jsonify({'message': 'Availability set successfully!'})
+
+@app.route('/doctor/appointments', methods=['GET'])
+@login_required
+def get_appointments():
+    if current_user.role != 'doctor':
+        return 'Access denied', 403
+    appointments = Appointment.query.filter_by(doctor_id=current_user.id).all()
+    response = []
+    for appointment in appointments:
+        patient = User.query.get(appointment.patient_id)
+        response.append({
+            'patient_name': patient.username,
+            'appointment_time': appointment.appointment_time.strftime('%Y-%m-%d %H:%M:%S')
+        })
+    return jsonify(response)
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5003)
