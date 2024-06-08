@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>自助挂号系统</title>
+    <link rel="stylesheet" href="http://127.0.0.1:5000/static/MAIN/mainpage.css">
+    <script>
+        function promptRole(role) {
+            if (role === 'login') {
+                window.location.href = 'http://127.0.0.1:5000/static/MAIN/login/login.html';
+            } else if (role === 'register') {
+                window.location.href = 'http://127.0.0.1:5000/static/MAIN/register/register.html';
+            } else {
+                alert('请选择一个角色');
+            }
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <h2>自助挂号系统</h2>
+        <button onclick="promptRole('login')">登录</button>
+        <button onclick="promptRole('register')">注册</button>
+    </div>
+</body>
+</html>
