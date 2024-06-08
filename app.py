@@ -95,7 +95,7 @@ def patient():
     return app.send_static_file('index.html')
 @app.route('/')
 def index():
-    return app.send_static_file('init.html')
+    return app.send_static_file('MAIN/mainpage.html')
 @app.route('/doctors', methods=['GET'])
 def get_doctors():
     doctors = User.query.filter_by(role='doctor').all()
