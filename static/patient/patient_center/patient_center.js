@@ -18,19 +18,25 @@ function fetchBookingHistory(patientId) {
     .catch(error => console.error('Fetching booking history failed:', error));
 }
 */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     fetchBookingHistory();
 });
 
 function fetchBookingHistory() {
-    // 假设这是从服务器获取的预约记录数据
-    const bookings = [
-        { id: 1, doctorName: '张医生', specialty: '内科', date: '2024-06-10', time: '09:00' },
-        { id: 2, doctorName: '李医生', specialty: '外科', date: '2024-06-15', time: '14:00' }
-    ];
+    fetch('/bookings')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(bookings => displayBookings(bookings))
+        .catch(error => console.error('Fetching booking history failed:', error));
+}
 
+function displayBookings(bookings) {
     const historyContainer = document.getElementById('booking-history');
-    historyContainer.innerHTML = `<h2>我的预约记录</h2>`; // 添加标题
+    historyContainer.innerHTML = `<h2>我的预约记录</h2>`;
     bookings.forEach(booking => {
         const item = document.createElement('div');
         item.className = 'booking-item';

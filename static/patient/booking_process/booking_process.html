@@ -1,70 +1,72 @@
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="UTF-8">
     <title>在线预约系统</title>
     <link rel="stylesheet" href="booking_process.css">
 </head>
+
 <body>
 
-<h1>在线预约系统</h1>
+    <h1>在线预约系统</h1>
 
-<!-- 选择科室 -->
-<div id="select-department">
-    <label for="department">选择科室：</label>
-    <select id="department" name="department" onchange="loadDoctors()">
-        <!-- 科室选项固定 -->
-        <option value="">请选择科室</option>
-        <option value="心血管内科">心血管内科</option>
-        <option value="神经内科">神经内科</option>
-        <option value="肿瘤科">肿瘤科</option>
-        <option value="儿科">儿科</option>
-        <!-- 更多科室选项 -->
-    </select>
-    <button type="button" onclick="loadDoctors()">下一步</button>
-</div>
+    <!-- 选择科室 -->
+    <div id="select-department">
+        <label for="department">选择科室：</label>
+        <select id="department" name="department" onchange="loadDoctors()">
+            <!-- 科室选项固定 -->
+            <option value="">请选择科室</option>
+            <option value="心血管内科">心血管内科</option>
+            <option value="神经内科">神经内科</option>
+            <option value="肿瘤科">肿瘤科</option>
+            <option value="儿科">儿科</option>
+            <!-- 更多科室选项 -->
+        </select>
+        <button type="button" onclick="loadDoctors()">下一步</button>
+    </div>
 
-<!-- 选择医生，初始隐藏 -->
-<div id="select-doctor" style="display: none;">
-    <label for="doctor">选择医生：</label>
-    <select id="doctor" name="doctor">
-        <!-- 医生选项将根据选择的科室动态加载 -->
-    </select>
-    <button type="button" onclick="loadTimeSlots()">下一步</button>
-</div>
+    <!-- 选择医生，初始隐藏 -->
+    <div id="select-doctor" style="display: none;">
+        <label for="doctor">选择医生：</label>
+        <select id="doctor" name="doctor">
+            <!-- 医生选项将根据选择的科室动态加载 -->
+        </select>
+        <button type="button" onclick="loadTimeSlots()">下一步</button>
+    </div>
 
-<!-- 选择时间段，初始隐藏 -->
-<div id="select-time-slot" style="display: none;">
-    <label for="time-slot">选择时间段：</label>
-    <select id="time-slot" name="time-slot">
-        <!-- 时间段选项将根据选择的医生动态加载 -->
-    </select>
-    <button type="button" onclick="showAppointmentForm()">提交预约</button>
-</div>
+    <!-- 选择时间段，初始隐藏 -->
+    <div id="select-time-slot" style="display: none;">
+        <label for="time-slot">选择时间段：</label>
+        <select id="time-slot" name="time-slot">
+            <!-- 时间段选项将根据选择的医生动态加载 -->
+        </select>
+        <button type="button" onclick="showAppointmentForm()">提交预约</button>
+    </div>
 
-<!-- 提交预约表单，初始隐藏 -->
-<div id="appointment-form" style="display: none;">
-    <form action="/submit-appointment" method="post">
-        <label for="patient-name">患者姓名：</label>
-        <input type="text" id="patient-name" name="patientName" required>
-        
-        <label for="patient-contact">ID：</label>
-        <input type="text" id="patient-contact" name="patientContact" required>
-        
-        <label for="selected-department">预约科室：</label>
-        <input type="text" id="selected-department" name="selectedDepartment" readonly>
-        
-        <label for="selected-doctor">预约医生：</label>
-        <input type="text" id="selected-doctor" name="selectedDoctor" readonly>
-        
-        <label for="selected-time">预约时间：</label>
-        <input type="text" id="selected-time" name="selectedTime" readonly>
-        
-        <input type="submit" value="提交预约" id="submit-button" onclick="submitAppointment(event)">
-    </form>
-</div>
+    <!-- 提交预约表单，初始隐藏 -->
+    <div id="appointment-form" style="display: none;">
+        <form action="/submit-appointment" method="post">
+            <label for="patient-name">患者姓名：</label>
+            <input type="text" id="patient-name" name="patientName" required>
 
-<script src="booking_process.js"></script>
+
+
+            <label for="selected-department">预约科室：</label>
+            <input type="text" id="selected-department" name="selectedDepartment" readonly>
+
+            <label for="selected-doctor">预约医生：</label>
+            <input type="text" id="selected-doctor" name="selectedDoctor" readonly>
+
+            <label for="selected-time">预约时间：</label>
+            <input type="text" id="selected-time" name="selectedTime" readonly>
+
+            <input type="submit" value="提交预约" id="submit-button" onclick="submitAppointment(event)">
+        </form>
+    </div>
+
+    <script src="booking_process.js"></script>
 
 </body>
+
 </html>

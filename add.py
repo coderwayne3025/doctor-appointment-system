@@ -2,13 +2,14 @@ from app import app,db, User,DoctorAvailability,Appointment
 from werkzeug.security import generate_password_hash
 from datetime import datetime
 # 创建一个新用户
-"""
+
 with app.app_context():
     # 创建一个新用户
     new_user = User(
-        username='zhang',
+        username='liwang',
         password=generate_password_hash('12345', method='pbkdf2:sha256'),
-        role='doctor'
+        role='doctor',
+        job = '儿科',
     )
     
     # 添加到数据库会话并提交
@@ -16,7 +17,7 @@ with app.app_context():
     db.session.commit()
     
     print("User added successfully!")
-"""
+
 """with app.app_context():
     # 创建一个新用户
     new_appointment= Appointment(
@@ -32,6 +33,7 @@ with app.app_context():
     
     print("appointment added successfully!")
     """
+"""
 with app.app_context():
     # 创建一个新用户
     new_appointment= DoctorAvailability(
@@ -45,4 +47,4 @@ with app.app_context():
     db.session.add(new_appointment)
     db.session.commit()
     
-    print("appointment added successfully!")
+    print("appointment added successfully!")"""

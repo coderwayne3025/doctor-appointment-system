@@ -6,6 +6,7 @@ from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from datetime import datetime
+import logging
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///appointments.db'
@@ -19,9 +20,10 @@ login_manager.login_view = 'login'
 # 数据模型
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
+    username = db.Column(db.String(80),nullable=False)
     password = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(20), nullable=False)  # 'patient', 'doctor', 'admin'
+    job = db.Column(db.String(20), nullable=True)
 
 class DoctorAvailability(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -29,10 +31,19 @@ class DoctorAvailability(db.Model):
     available_time = db.Column(db.DateTime, nullable=False)
 
 class Appointment(db.Model):
+    patient_name = db.Column(db.String(80))
+    doctor_name = db.Column(db.String(80))
     id = db.Column(db.Integer, primary_key=True)
     doctor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     patient_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     appointment_time = db.Column(db.DateTime, nullable=False)
+    department=db.Column(db.String(20), nullable=True)
+    
+    
+   
+   
+   
+    
 
 
 # 登录管理
@@ -98,16 +109,41 @@ def index():
     return app.send_static_file('MAIN/mainpage.html')
 @app.route('/doctors', methods=['GET'])
 def get_doctors():
+    # 查询所有角色为医生的用户
     doctors = User.query.filter_by(role='doctor').all()
-    return jsonify([{'id': doc.id, 'username': doc.username} for doc in doctors])
+
+    # 查询所有医生的空闲时间
+    availability_data = DoctorAvailability.query.all()
+
+    # 构建医生ID到空闲时间的映射
+    availability_map = {}
+    for availability in availability_data:
+        if availability.doctor_id not in availability_map:
+            availability_map[availability.doctor_id] = []
+        availability_map[availability.doctor_id].append(availability.available_time)
+
+    # 构建返回的医生列表，包括空闲时间
+    doctor_list = []
+    for doc in doctors:
+        doctor_list.append({
+            'id': doc.id,
+            'username': doc.username,
+            'specialty': doc.job,
+            'availability': availability_map.get(doc.id, [])  # 获取医生的空闲时间，如果没有则返回空列表
+        })
+
+    return jsonify(doctor_list)
 
 @app.route('/appointments', methods=['POST'])
 def book_appointment():
     data = request.json
     new_appointment = Appointment(
-        doctor_id=data['doctor_id'],
-        patient_id=data['patient_id'],
-        appointment_time=datetime.strptime(data['appointment_time'], '%Y-%m-%d')
+        doctor_id=data['selectedDoctorId'],
+        patient_id=data['patientID'],
+        patient_name=data['patientName'],
+        doctor_name=data['selectedDoctor'],
+        appointment_time=datetime.strptime(data['selectedTime'], '%Y-%m-%dT%H:%M'),
+        department = data['selectedDepartment'],
     )
     db.session.add(new_appointment)
     db.session.commit()
@@ -128,6 +164,38 @@ def set_availability():
     db.session.add(new_availability)
     db.session.commit()
     return jsonify({'message': 'Availability set successfully!'})
+@app.route('/bookings', methods=['GET'])
+def get_bookings():
+    # 获取请求中的患者ID
+    patient_id = current_user.id
+    
+    
+
+    try:
+        # 查询该患者的所有预约记录
+        appointments = Appointment.query.filter_by(patient_id=patient_id).all()
+
+        # 构建返回结果
+        result = []
+        for appointment in appointments:
+            doctor = User.query.get(appointment.doctor_id)
+            result.append({
+                'doctorName': doctor.username,
+                'specialty': doctor.job,  # 修改此行以适应你的模型
+                'date': appointment.appointment_time.strftime('%Y-%m-%d'),
+                'time': appointment.appointment_time.strftime('%H:%M')
+            })
+
+        return jsonify(result)
+    
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@app.route('/current_user', methods=['GET'])
+@login_required
+def get_current_user():
+    app.logger.info('Current user ID: %s', current_user.id)
+    return jsonify({'id': current_user.id})
 
 @app.route('/doctor/appointments', methods=['GET'])
 @login_required
@@ -145,4 +213,4 @@ def get_appointments():
     return jsonify(response)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5003)
+    app.run(debug=True, port=5000)

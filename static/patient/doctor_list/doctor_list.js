@@ -1,5 +1,5 @@
 // script.js
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     fetchDoctorsList();
 });
 /*
@@ -48,20 +48,20 @@ async function fetchDoctorsList() {
         { id: 2, name: '李医生', specialty: '外科' ,timelist: ['08:30', '09:30', '14:00'] },
         { id: 3, name: '王医生', specialty: '儿科' ,timelist: ['10:15', '11:15', '15:00'] }
     ];*/
-    function displayDoctors(doctors){
-    const listContainer = document.getElementById('doctor-list');
-    doctors.forEach(doctor => {
-        const card = document.createElement('div');
-        card.className = 'doctor-card';
-        card.innerHTML = `
+    function displayDoctors(doctors) {
+        const listContainer = document.getElementById('doctor-list');
+        doctors.forEach(doctor => {
+            const card = document.createElement('div');
+            card.className = 'doctor-card';
+            card.innerHTML = `
             <img src="../image/doctor.png" alt="${doctor.name}">
             <div class="doctor-info">
-                <h2>${doctor.name}</h2>
+                <h2>${doctor.username}</h2>
                 <p>科室: ${doctor.specialty}</p>
                 <p>ID: ${doctor.id}</p>
             </div>
         `;
-        listContainer.appendChild(card); 
-    });
+            listContainer.appendChild(card);
+        });
     }
 }
