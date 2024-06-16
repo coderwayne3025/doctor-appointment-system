@@ -28,7 +28,7 @@ async function fetchDoctorsList() {
     } catch (error) {
         console.error('Fetching doctors failed:', error);
     }
-    displayDoctors(doctors)
+
     // 假设这是从服务器获取的医生数据
     //const response = await fetch('/doctors');
     //const doctors = await response.json();

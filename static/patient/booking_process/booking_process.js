@@ -1,4 +1,4 @@
-function loadDoctors() {
+async function loadDoctors() {
     // 获取用户选择的科室值
     var departmentSelect = document.getElementById('department');
     var selectedDepartment = departmentSelect.value;
@@ -12,13 +12,13 @@ function loadDoctors() {
     doctorSelect.innerHTML = '';
 
     // 调用后端API获取医生列表
-    //const response = await fetch('/doctors');
-    //const doctors = await response.json();
-    const doctors = [
+    const response = await fetch('/doctors');
+    const doctors = await response.json();
+    /*const doctors = [
         { id: 1, name: '张医生', specialty: '内科' ,timelist: ['09:00', '10:00', '11:00']},
         { id: 2, name: '李医生', specialty: '外科' ,timelist: ['08:30', '09:30', '14:00'] },
         { id: 3, name: '王医生', specialty: '儿科' ,timelist: ['10:15', '11:15', '15:00'] }
-    ];
+    ];*/
     doctors.forEach(doctor => {
         if (doctor.specialty === selectedDepartment) {
             var option = document.createElement('option');
@@ -145,7 +145,7 @@ function submitAppointment(event) {
         selectedDoctor: selectedDoctor,
         selectedTime: selectedTime
     }
-    /* 发送请求到服务器进行处理
+    // 发送请求到服务器进行处理
         fetch('/submit-appointment', {
              method: 'POST',
              body: JSON.stringify(formData),
@@ -155,7 +155,7 @@ function submitAppointment(event) {
             if (data.success) {displaySuccessMessage();} 
             else {console.error('预约失败:', data.message);
             })
-        .catch(error => console.error('Error:', error));} catch (error) {console.error('表单提交失败:', error);}*/
+        .catch(error => console.error('Error:', error));} catch (error) {console.error('表单提交失败:', error);}
 
     // 直接显示提交成功的页面或消息
     displaySuccessMessage();
