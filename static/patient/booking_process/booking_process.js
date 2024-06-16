@@ -146,7 +146,7 @@ function submitAppointment(event) {
         selectedTime: selectedTime
     }
     // 发送请求到服务器进行处理
-        fetch('/submit-appointment', {
+        fetch('/appointments', {
              method: 'POST',
              body: JSON.stringify(formData),
          })

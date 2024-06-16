@@ -1,5 +1,8 @@
 // script.js
-/*
+document.addEventListener('DOMContentLoaded', function() {
+    fetchBookingHistory();
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     const patientId = '从用户会话获取的患者ID'; // 假设我们已经获取了患者ID
     fetchBookingHistory(patientId);
@@ -17,11 +20,9 @@ function fetchBookingHistory(patientId) {
     .then(bookings => displayBookings(bookings))
     .catch(error => console.error('Fetching booking history failed:', error));
 }
-*/
-document.addEventListener('DOMContentLoaded', function() {
-    fetchBookingHistory();
-});
 
+
+/*
 function fetchBookingHistory() {
     // 假设这是从服务器获取的预约记录数据
     const bookings = [
@@ -45,3 +46,4 @@ function fetchBookingHistory() {
         historyContainer.appendChild(item);
     });
 }
+*/
