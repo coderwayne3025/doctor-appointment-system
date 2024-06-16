@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>接收预约消息</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+        .header { background: #333; color: #fff; padding: 10px 20px; text-align: center; }
+        .container { margin: 20px; padding: 20px; background: #fff; }
+        .message-list { list-style: none; padding: 0; margin: 20px 0; }
+        .message-list li { background: #e9e9e9; margin-bottom: 10px; padding: 10px; border-left: 3px solid #333; }
+        .footer { background: #333; color: #fff; text-align: center; padding: 10px 20px; position: fixed; bottom: 0; width: calc(100% - 40px); }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>接收预约消息</h1>
+    </div>
+    <div class="container">
+        <h2>您的消息列表</h2>
+        <ul class="message-list" id="messageList">
+            <!-- 消息列表将通过JavaScript动态生成 -->
+        </ul>
+    </div>
+    <div class="footer">
+        <p>&copy; 2024 医院管理系统</p>
+    </div>
+
+    <script>
+        // 模拟消息数据
+        var messages = [
+            { id: 1, content: "患者张三希望预约明天上午的咨询。" },
+            { id: 2, content: "患者李四希望预约后天下午的复诊。" },
+            { id: 3, content: "患者王五希望预约下周一的检查。" }
+        ];
+
+        // 将消息添加到页面
+        function displayMessages() {
+            var messageList = document.getElementById('messageList');
+            messages.forEach(function(message) {
+                var listItem = document.createElement('li');
+                listItem.textContent = message.content;
+                messageList.appendChild(listItem);
+            });
+        }
+
+        // 页面加载完成后显示消息
+        window.onload = displayMessages;
+    </script>
+</body>
+</html>

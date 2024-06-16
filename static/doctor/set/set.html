@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>空闲时间设置</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f4f4f4; }
+        .container { max-width: 600px; margin: 0 auto; background: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { color: #333; }
+        form { display: flex; flex-direction: column; }
+        label { margin-top: 10px; }
+        select, input[type="number"] { padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 4px; }
+        input[type="submit"] { background: #5cb85c; color: white; padding: 10px; border: none; border-radius: 4px; margin-top: 20px; cursor: pointer; }
+        input[type="submit"]:hover { background: #4cae4c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>选择您的空闲时间</h2>
+        <form action="/submit-settings" method="post">
+            <label for="availableDay">选择哪一天</label>
+            <select id="availableDay" name="availableDay" required>
+                <option value="Monday">周一</option>
+                <option value="Tuesday">周二</option>
+                <option value="Wednesday">周三</option>
+                <option value="Thursday">周四</option>
+                <option value="Friday">周五</option>
+                <option value="Saturday">周六</option>
+                <option value="Sunday">周日</option>
+            </select>
+            <label for="availableTime">空闲时间:</label>
+
+            <div id="availableTime" class="time-slots">
+                <div class="time-slot">
+                <input type="checkbox" id="time1" name="availableTimes" value="8:00-8:30">
+                <label for="time1">8:00 - 8:30</label>
+                </div>
+                <div class="time-slot">
+                <input type="checkbox" id="time2" name="availableTimes" value="8:30-9:00">
+                <label for="time2">8:30 - 9:00</label>
+                </div>
+                <div class="time-slot">
+                <input type="checkbox" id="time3" name="availableTimes" value="9:00-9:30">
+                <label for="time3">9:00 - 9:30</label>
+                </div>
+                <div class="time-slot">
+                <input type="checkbox" id="time4" name="availableTimes" value="9:30-10:00">
+                <label for="time4">9:00 - 9:30</label>
+                </div>
+                <div class="time-slot">
+                <input type="checkbox" id="time5" name="availableTimes" value="10:00-10:30">
+                <label for="time5">10:00 - 10:30</label>
+                </div>
+                <div class="time-slot">
+                <input type="checkbox" id="time6" name="availableTimes" value="10:30-11:00">
+                <label for="time6">10:30 - 11:00</label>
+                </div>
+                <div class="time-slot">
+                <input type="checkbox" id="time7" name="availableTimes" value="11:00-11:30">
+                <label for="time7">11:00 - 11:30</label>
+                </div>
+                <div class="time-slot">
+                <input type="checkbox" id="time8" name="availableTimes" value="13:30-14:00">
+                <label for="time8">13:30 - 14:00</label>
+                </div>
+                <div class="time-slot">
+                <input type="checkbox" id="time9" name="availableTimes" value="14:00-14:30">
+                <label for="time9">14:00 - 14:30</label>
+                </div>
+                <div class="time-slot">
+                <input type="checkbox" id="time10" name="availableTimes" value="14:30-15:00">
+                <label for="time10">14:30 - 15:00</label>
+                </div>
+                <div class="time-slot">
+                <input type="checkbox" id="time11" name="availableTimes" value="15:00-15:30">
+                <label for="time11">15:00 - 15:30</label>
+                </div>
+                <div class="time-slot">
+                <input type="checkbox" id="time12" name="availableTimes" value="15:30-16:00">
+                <label for="time12">15:30 - 16:00</label>
+                </div>
+                <div class="time-slot">
+                <input type="checkbox" id="time13" name="availableTimes" value="16:00-16:30">
+                <label for="time13">16:00 - 16:30</label>
+                </div>
+                <div class="time-slot">
+                <input type="checkbox" id="time14" name="availableTimes" value="16:30-17:00">
+                <label for="time14">16:30 - 17:00</label>
+                </div>
+        </div>
+
+
+            <label for="patientsPerDay">每个时间段可接待病人数:</label>
+            <select id="patientsPerDay" name="patientsPerDay" required>
+
+                <option value=1>1</option>
+                <option value=2>2</option>
+                <option value=3>3</option>
+                <option value=4>4</option>
+                <option value=5>5</option>
+                <option value=6>6</option>
+                <option value=7>7</option>
+                <option value=8>8</option>
+                <option value=9>9</option>
+                <option value=10>10</option>
+            </select>
+
+            <input type="submit" value="保存设置">
+        </form>
+    </div>
+</body>
+</html>
