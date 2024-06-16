@@ -13,6 +13,7 @@ async function fetchDoctorsList() {
     } catch (error) {
         console.error('Fetching doctors failed:', error);
     }
+    /*
     var messages = [
             { id: 1, patient: "张三", time: "周一，8:30~9:00"content: "患者张三希望预约明天上午的咨询。" },
             { id: 2, content: "患者李四希望预约后天下午的复诊。" },
@@ -27,4 +28,5 @@ async function fetchDoctorsList() {
                 messageList.appendChild(listItem);
             });
         }
+        */
 }

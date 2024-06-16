@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>医生管理</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
+        .container { width: 80%; margin: 20px auto; background: #fff; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; }
+        form { margin-top: 20px; }
+        label { display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="submit"] { width: 100%; padding: 10px; margin-bottom: 20px; }
+        button { padding: 10px 20px; background: #333; color: #fff; border: none; cursor: pointer; }
+        button:hover { background: #555; }
+        .doctor-list { margin-top: 40px; }
+        .doctor-item { background: #eee; padding: 10px; margin-bottom: 10px; }
+    </style>
+    <meta charset="UTF-8">
+    <title>医生管理系统</title>
+    <script src="management.js"></script>
+</head>
+<body>
+    <header>
+        <h1>医生管理系统</h1>
+        <nav>
+            <!-- 导航链接 -->
+        </nav>
+    </header>
+
+    <main>
+        <section id="add-doctor">
+            <h2>添加新医生</h2>
+            <form id="addDoctorForm">
+                <label for="name">姓名:</label>
+                <input type="text" id="name" name="name" required><br>
+
+                <label for="specialty">专业:</label>
+                <input type="text" id="specialty" name="specialty" required><br>
+
+                <label for="contact">联系方式:</label>
+                <input type="text" id="contact" name="contact" required><br>
+
+                <label for="location">工作地点:</label>
+                <input type="text" id="location" name="location" required><br>
+
+                <button type="submit">添加医生</button>
+            </form>
+        </section>
+
+        <section id="doctor-list">
+            <h2>医生列表</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>姓名</th>
+                        <th>专业</th>
+                        <th>联系方式</th>
+                        <th>工作地点</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 医生列表数据 -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>版权所有 © 2024 医生管理系统</p>
+    </footer>
+</body>
+</html>

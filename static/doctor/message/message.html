@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>接收预约消息</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f4f4f4; }
         .header { background: #333; color: #fff; padding: 10px 20px; text-align: center; }
@@ -27,12 +28,27 @@
     </div>
 
     <script>
-        // 模拟消息数据
+        function fetchAppointments() {
+            $.get('/doctor/appointments', function (data) {
+                const appointmentsTableBody = $('#appointmentsTable tbody');
+                appointmentsTableBody.empty();
+                data.forEach(appointment => {
+                    const row = `<tr>
+                        <td>${appointment.patient_name}</td>
+                        <td>${appointment.appointment_time}</td>
+                    </tr>`;
+                    appointmentsTableBody.append(row);
+                });
+            });
+        }
+
+        /* 模拟消息数据
         var messages = [
             { id: 1, content: "患者张三希望预约明天上午的咨询。" },
             { id: 2, content: "患者李四希望预约后天下午的复诊。" },
             { id: 3, content: "患者王五希望预约下周一的检查。" }
         ];
+        */
 
         // 将消息添加到页面
         function displayMessages() {
@@ -45,7 +61,7 @@
         }
 
         // 页面加载完成后显示消息
-        window.onload = displayMessages;
+        window.onload = fetchAppointments;
     </script>
 </body>
 </html>
