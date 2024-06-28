@@ -6,10 +6,10 @@ from datetime import datetime
 with app.app_context():
     # 创建一个新用户
     new_user = User(
-        username='liwang',
+        username='chow',
         password=generate_password_hash('12345', method='pbkdf2:sha256'),
-        role='doctor',
-        job = '儿科',
+        role='admin',
+        
     )
     
     # 添加到数据库会话并提交

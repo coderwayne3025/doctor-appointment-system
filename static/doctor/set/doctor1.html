@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard2</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+
+<body>
+
+    <div class="card mt-3">
+        <div class="card-header">
+            <h2>设置空闲时间和接诊人数</h2>
+        </div>
+        <div class="card-body">
+            <form id="availabilityForm">
+                <div class="form-group">
+                    <label for="availableTime">选择空闲时间</label>
+                    <input type="datetime-local" class="form-control" id="availableTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="availableSlots">该时间段可接诊人数</label>
+                    <input type="number" class="form-control" id="availableSlots" required min="0">
+                </div>
+                <button type="submit" class="btn btn-primary">保存</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Handle setting availability
+        $('#availabilityForm').submit(function (event) {
+            event.preventDefault();
+            const availableTime = $('#availableTime').val();
+            const availableSlots = $('#availableSlots').val();
+            $.ajax({
+                url: '/doctor/set_availability',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ available_time: availableTime, available_slots: availableSlots }),
+                success: function (response) {
+                    alert(response.message);
+                    fetchAppointments();
+                },
+                error: function (xhr, status, error) {
+                    alert('Error: ' + xhr.responseText);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

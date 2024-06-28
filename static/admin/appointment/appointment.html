@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>预约消息管理</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #555;
+        }
+
+        .doctor-list {
+            margin-top: 40px;
+        }
+
+        .doctor-item {
+            background: #eee;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script src="appointment.js"></script>
+</head>
+
+<body>
+    <header>
+        <h1>预约消息管理</h1>
+        <nav>
+            <!-- 导航链接 -->
+        </nav>
+    </header>
+
+    <main>
+        <section id="search-filter">
+            <h2>搜索和过滤预约</h2>
+            <input type="text" id="search" placeholder="输入医生的id...">
+            <button onclick="searchAppointments()">搜索</button>
+            <!-- 可以添加更多的过滤选项 -->
+        </section>
+
+        <section id="appointment-list">
+            <h2>所有预约消息</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>预约号</th>
+                        <th>医生id</th>
+                        <th>患者姓名</th>
+                        <th>医生姓名</th>
+                        <th>预约时间</th>
+                        <th>科室</th>
+                        <!-- 可以添加更多列 -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 预约列表数据 -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 分页组件 -->
+        <section id="pagination">
+            <!-- 分页按钮 -->
+        </section>
+    </main>
+
+    <footer>
+        <p>版权所有 © 2024 预约管理系统</p>
+    </footer>
+</body>
+
+</html>

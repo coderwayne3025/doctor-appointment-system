@@ -24,11 +24,15 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(200), nullable=False)
     role = db.Column(db.String(20), nullable=False)  # 'patient', 'doctor', 'admin'
     job = db.Column(db.String(20), nullable=True)
+    address = db.Column(db.String(20))
+    phone = db.Column(db.String(20))
+
 
 class DoctorAvailability(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     doctor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     available_time = db.Column(db.DateTime, nullable=False)
+    slots = db.Column(db.Integer)
 
 class Appointment(db.Model):
     patient_name = db.Column(db.String(80))
@@ -56,7 +60,7 @@ def load_user(user_id):
 def register():
     data = request.json
     hashed_password = generate_password_hash(data['password'], method='pbkdf2:sha256')
-    new_user = User(username=data['username'], password=hashed_password, role=data['role'])
+    new_user = User(username=data['username'], password=hashed_password, role='patient')
     db.session.add(new_user)
     db.session.commit()
     return jsonify({'message': 'User registered successfully!'})
@@ -134,19 +138,57 @@ def get_doctors():
 
     return jsonify(doctor_list)
 
+@app.route('/doctors-show', methods=['GET'])
+def get_doctors_all():
+    # 查询所有角色为医生的用户
+    doctors = User.query.filter_by(role='doctor').all()
+    doctor_list = []
+    for doc in doctors:
+        doctor_list.append({
+            'id':doc.id,
+            'contact':doc.phone,
+            'name': doc.username,
+            'specialty': doc.job,
+            'location': doc.address# 获取医生的空闲时间，如果没有则返回空列表
+        })
+
+    return jsonify(doctor_list)
+
+
+
 @app.route('/appointments', methods=['POST'])
 def book_appointment():
     data = request.json
+    
+    # 查找对应的 DoctorAvailability 项
+    doctor_availability = DoctorAvailability.query.filter_by(
+        doctor_id=data['selectedDoctorId'],
+        available_time=datetime.strptime(data['selectedTime'], '%Y-%m-%dT%H:%M')
+    ).first()
+    
+    if not doctor_availability:
+        return jsonify({'message': 'No availability found for the selected doctor and time.'}), 400
+    
+    if doctor_availability.slots <= 0:
+        return jsonify({'message': '该医生该时间已经无法预约'}), 400
+
+    # 减少可用的 slots
+    doctor_availability.slots -= 1
+    
+    # 创建新预约
     new_appointment = Appointment(
         doctor_id=data['selectedDoctorId'],
         patient_id=data['patientID'],
         patient_name=data['patientName'],
         doctor_name=data['selectedDoctor'],
         appointment_time=datetime.strptime(data['selectedTime'], '%Y-%m-%dT%H:%M'),
-        department = data['selectedDepartment'],
+        department=data['selectedDepartment'],
     )
     db.session.add(new_appointment)
+    
+    # 提交更改
     db.session.commit()
+
     return jsonify({'message': 'Appointment booked successfully!'}), 201
 
 @app.route('/doctor/set_availability', methods=['POST'])
@@ -160,7 +202,7 @@ def set_availability():
     print(data)
     available_time = datetime.strptime(data['available_time'], '%Y-%m-%dT%H:%M')
     print(available_time)
-    new_availability = DoctorAvailability(doctor_id=current_user.id, available_time=available_time)
+    new_availability = DoctorAvailability(doctor_id=current_user.id, available_time=available_time, slots = data['available_slots'])
     db.session.add(new_availability)
     db.session.commit()
     return jsonify({'message': 'Availability set successfully!'})
@@ -211,6 +253,76 @@ def get_appointments():
             'appointment_time': appointment.appointment_time.strftime('%Y-%m-%d %H:%M:%S')
         })
     return jsonify(response)
+
+@app.route('/add-doctor', methods=['POST'])
+@login_required
+def add_doctor():
+    data = request.get_json()
+
+    # 获取JSON数据中的字段
+    name = data.get('name')
+    specialty = data.get('specialty')
+    contact = data.get('contact')
+    location = data.get('location')
+
+    if not name or not specialty or not contact or not location:
+        return jsonify({'error': '所有字段都是必填的！'}), 400
+
+    # 创建一个新的Doctor对象
+    new_doctor = User(
+        username=name,
+        role='doctor',
+        phone=contact,
+        address=location,
+        password=generate_password_hash('12345', method='pbkdf2:sha256'),
+        job = specialty
+    )
+
+    # 添加到数据库会话并提交
+    db.session.add(new_doctor)
+    db.session.commit()
+
+    return jsonify({'message': '医生添加成功！'}), 200
+
+
+@app.route('/delete-doctor/<int:id>', methods=['DELETE'])
+@login_required
+def delete_doctor(id):
+    doctor = User.query.get_or_404(id)
+    db.session.delete(doctor)
+    db.session.commit()
+
+    return jsonify({'message': '医生删除成功！'}), 200
+
+
+@app.route('/get-appointments', methods=['GET'])
+@login_required
+def fetch_appointments():
+    search_term = request.args.get('search', '')
+
+    # 根据搜索条件查询数据库
+    appointments = Appointment.query.filter(
+        
+        (Appointment.doctor_id.like(f'%{search_term}%'))
+    ).all()
+
+    # 将查询结果转换为JSON格式
+    appointments_list = [
+        {
+            'id': appointment.id,
+            'doctor_id':appointment.doctor_id,
+            'patientName': appointment.patient_name,
+            'doctorName': appointment.doctor_name,
+            'appointmentTime': appointment.appointment_time,
+            'department':appointment.department
+
+             
+        }
+        for appointment in appointments
+    ]
+
+    return jsonify(appointments_list), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

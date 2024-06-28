@@ -107,11 +107,11 @@ function loadTimeSlots() {
 
 function formatDateTime(dateTime) {
     const date = new Date(dateTime);
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(date.getUTCDate()).padStart(2, '0');
+    const hours = String(date.getUTCHours()).padStart(2, '0');
+    const minutes = String(date.getUTCMinutes()).padStart(2, '0');
     return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
@@ -177,13 +177,31 @@ function processAppointmentForm(currentUserId) {
         },
         body: JSON.stringify(formData)
     })
-        .then(response => response.json())
+        .then(response => {
+            if (response.status === 400) {
+                // 处理 400 错误
+                return response.json().then(error => {
+                    throw new Error(error.message);
+                });
+            } else if (response.status >= 400) {
+                // 处理其他错误（包括 500）
+                return response.json().then(error => {
+                    throw new Error(error.message);
+                });
+            }
+            return response.json();
+        })
         .then(data => {
             console.log('Appointment booked successfully:', data);
             // 可以在这里添加进一步的操作，例如显示确认消息
+            displaySuccessMessage();
         })
-        .catch(error => console.error('Error booking appointment:', error));
-    displaySuccessMessage()
+        .catch(error => {
+            console.error('Error booking appointment:', error);
+            // 在这里调用 displayFailureMessage()
+            displayFailureMessage();
+        });
+
 }
 
 
@@ -195,6 +213,17 @@ function displaySuccessMessage() {
 
     // 将成功消息添加到文档中
     document.body.appendChild(successDiv);
+
+    // 隐藏表单
+    document.getElementById('appointment-form').style.display = 'none';
+}
+function displayFailureMessage() {
+    var failDiv = document.createElement('div');
+    failDiv.id = 'failure-message';
+    failDiv.innerHTML = '<h2>预约失败！当前时间无法预约</h2><p></p>';
+
+    // 将成功消息添加到文档中
+    document.body.appendChild(failDiv);
 
     // 隐藏表单
     document.getElementById('appointment-form').style.display = 'none';
