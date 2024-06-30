@@ -5,17 +5,10 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault(); // 阻止表单默认提交行为
 
         var formData = new FormData(event.target);
-        var doctorData = {
-            name: formData.get('name'),
-            specialty: formData.get('specialty'),
-            contact: formData.get('contact'),
-            location: formData.get('location')
-        };
 
         // 使用AJAX发送数据到服务器
         var xhr = new XMLHttpRequest();
         xhr.open('POST', '/add-doctor', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
         xhr.onload = function () {
             if (xhr.status === 200) {
                 // 添加成功后，更新医生列表
@@ -25,8 +18,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 alert('添加医生失败，请重试！');
             }
         };
-        xhr.send(JSON.stringify(doctorData));
+        xhr.send(formData);
     });
+
 
     // 为每个删除按钮添加点击事件监听器
     document.getElementById('doctor-list').addEventListener('click', function (event) {
@@ -48,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 });
+
 
 function updateDoctorList() {
     // 使用AJAX请求获取最新的医生列表

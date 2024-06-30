@@ -1,17 +1,22 @@
 # backend/app.py
 # app.py
-from flask import Flask, request, jsonify, redirect, url_for
+from flask import Flask, request, jsonify, redirect, url_for,send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from datetime import datetime
 import logging
+from werkzeug.utils import secure_filename
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///appointments.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'your_secret_key'
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
@@ -26,6 +31,8 @@ class User(UserMixin, db.Model):
     job = db.Column(db.String(20), nullable=True)
     address = db.Column(db.String(20))
     phone = db.Column(db.String(20))
+    description = db.Column(db.String(600)) 
+    photo = db.Column(db.String(300), nullable=True)  # 文件名
 
 
 class DoctorAvailability(db.Model):
@@ -111,6 +118,12 @@ def patient():
 @app.route('/')
 def index():
     return app.send_static_file('MAIN/mainpage.html')
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
 @app.route('/doctors', methods=['GET'])
 def get_doctors():
     # 查询所有角色为医生的用户
@@ -133,7 +146,11 @@ def get_doctors():
             'id': doc.id,
             'username': doc.username,
             'specialty': doc.job,
-            'availability': availability_map.get(doc.id, [])  # 获取医生的空闲时间，如果没有则返回空列表
+            'availability': availability_map.get(doc.id, []),
+            'photo':doc.photo,
+            'description':doc.description
+    
+             
         })
 
     return jsonify(doctor_list)
@@ -254,16 +271,33 @@ def get_appointments():
         })
     return jsonify(response)
 
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 @app.route('/add-doctor', methods=['POST'])
 @login_required
 def add_doctor():
-    data = request.get_json()
+    print('555')
 
-    # 获取JSON数据中的字段
-    name = data.get('name')
-    specialty = data.get('specialty')
-    contact = data.get('contact')
-    location = data.get('location')
+    if 'photo' not in request.files:
+        return jsonify({'error': 'No photo file provided'}), 400
+
+    file = request.files['photo']
+    print('777')
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    else:
+        return jsonify({'error': 'Invalid file format'}), 400
+
+    # 获取表单数据中的字段
+    name = request.form.get('name')
+    specialty = request.form.get('specialty')
+    contact = request.form.get('contact')
+    location = request.form.get('location')
+    description = request.form.get('description')
 
     if not name or not specialty or not contact or not location:
         return jsonify({'error': '所有字段都是必填的！'}), 400
@@ -275,7 +309,9 @@ def add_doctor():
         phone=contact,
         address=location,
         password=generate_password_hash('12345', method='pbkdf2:sha256'),
-        job = specialty
+        job=specialty,
+        description=description,
+        photo=filename
     )
 
     # 添加到数据库会话并提交
@@ -283,7 +319,6 @@ def add_doctor():
     db.session.commit()
 
     return jsonify({'message': '医生添加成功！'}), 200
-
 
 @app.route('/delete-doctor/<int:id>', methods=['DELETE'])
 @login_required

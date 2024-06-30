@@ -78,7 +78,7 @@
     <main>
         <section id="add-doctor">
             <h2>添加新医生</h2>
-            <form id="addDoctorForm">
+            <form id="addDoctorForm" enctype="multipart/form-data">
                 <label for="name">姓名:</label>
                 <input type="text" id="name" name="name" required><br>
 
@@ -90,6 +90,12 @@
 
                 <label for="location">工作地点:</label>
                 <input type="text" id="location" name="location" required><br>
+
+                <label for="description">描述：</label>
+                <input type="text" id="description" name="description" required><br>
+
+                <label for="photo">照片：</label>
+                <input type="file" id="photo" name="photo" required><br>
 
                 <button type="submit">添加医生</button>
             </form>

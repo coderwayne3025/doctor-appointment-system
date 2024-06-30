@@ -53,12 +53,14 @@ async function fetchDoctorsList() {
         doctors.forEach(doctor => {
             const card = document.createElement('div');
             card.className = 'doctor-card';
+            const imageUrl = doctor.photo ? `/uploads/${doctor.photo}` : '../image/doctor.png';
             card.innerHTML = `
-            <img src="../image/doctor.png" alt="${doctor.name}">
+            <img src="${imageUrl}" alt="${doctor.username}">
             <div class="doctor-info">
                 <h2>${doctor.username}</h2>
                 <p>科室: ${doctor.specialty}</p>
                 <p>ID: ${doctor.id}</p>
+                <p>医生简介: ${doctor.description}</p>
             </div>
         `;
             listContainer.appendChild(card);
